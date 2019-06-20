@@ -75,7 +75,7 @@ function register($data){
     return false;
   }
 
-  $result = mysqli_query($conn, "INSERT INTO tb_user_login VALUES ('$username', '$password', '$email')");
+  $result = mysqli_query($conn, "INSERT INTO tb_user_login VALUES ('', '$username', '$password', '$email')");
 
 
   // $passwordNew = password_hash($password, PASSWORD_DEFAULT);

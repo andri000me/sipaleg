@@ -238,6 +238,9 @@
 	               <td><?= $namaPartai ?></td>
 	               <td><?= $caleg['username'] ?></td>
 	               <td>
+                   <a href="view_caleg?caleg=<?= $caleg['id'] ?>" class="settings" title="View"><i
+                  class="material-icons" style="color: rgb(0, 200, 135)">remove_red_eye</i></a>
+	                 
 	                 <a href="edit_data?caleg=<?= $caleg['id'] ?>" class="settings" title="Edit"><i
                   class="material-icons">&#xE8B8;</i></a>
 	                 <a href="delete_data?caleg=<?= $caleg['id'] ?>" class="delete" title="Delete" data-toggle="tooltip">

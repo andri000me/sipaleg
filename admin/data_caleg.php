@@ -238,8 +238,8 @@
 	               <td><?= $namaPartai ?></td>
 	               <td><?= $caleg['username'] ?></td>
 	               <td>
-	                 <!-- <a href="edit_data?caleg=<?= $caleg['id'] ?>" class="settings" title="Edit"><i
-                  class="material-icons">&#xE8B8;</i></a> -->
+	                 <a href="edit_data?caleg=<?= $caleg['id'] ?>" class="settings" title="Edit"><i
+                  class="material-icons">&#xE8B8;</i></a>
 	                 <a href="delete_data?caleg=<?= $caleg['id'] ?>" class="delete" title="Delete" data-toggle="tooltip">
 	                   <i class="material-icons">&#xE5C9;</i>
 	                 </a>

@@ -215,6 +215,7 @@ function daftar($data){
       // }
 
     }
+  }
     
     $uname = $_SESSION['username'];
 
@@ -265,7 +266,6 @@ function daftar($data){
     $insert = mysqli_query($conn, $query);
 
     return mysqli_affected_rows($conn);
-}
 }
 ?>
 

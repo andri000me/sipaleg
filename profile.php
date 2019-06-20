@@ -22,6 +22,8 @@
     $enableEdit = "enable";
   }
 
+  
+
   $uname = $_SESSION['username'];
   $result = mysqli_query($conn, "SELECT * FROM tb_data_caleg WHERE username='$uname'");
   $getDaftar = mysqli_num_rows($result);
@@ -55,7 +57,134 @@
   $idTingkat = $dataCaleg['tingkat_caleg'];
   $namaTingkat = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_tingkat_caleg WHERE id_tingkat='$idTingkat'"))['nama_tingkat'];
 
+  
 
+  if (isset($_POST['save'])){
+    $data = $_POST;
+    $provinsi = htmlspecialchars($data['provinsi']);
+    $kabupaten = htmlspecialchars($data['kabupaten']);
+    $kecamatan = htmlspecialchars($data['kecamatan']);
+
+    $username = $_SESSION['username'];
+    $id = htmlspecialchars($data['idc']);
+    $tanggal_daftar = '';
+    $nik = htmlspecialchars($data['nik']);
+    $nama = htmlspecialchars($data['nama']);
+    $tempat_lahir = htmlspecialchars($data['tempat_lahir']);
+    $tanggal_lahir = htmlspecialchars($data['tanggal_lahir']);
+    $gender = htmlspecialchars($data['gender']);
+    $agama = htmlspecialchars($data['agama']);
+    $pend_akhir = htmlspecialchars($data['pend_akhir']);
+    $bidang_pend = htmlspecialchars($data['bidang_pend']);
+    $pekerjaan = htmlspecialchars($data['pekerjaan']);
+    $kelurahan = htmlspecialchars($data['kelurahan']);
+    $alamat_ktp = htmlspecialchars($data['alamat_ktp']);
+    $alamat_tinggal = htmlspecialchars($data['alamat_tinggal']);
+    $telepon = htmlspecialchars($data['telepon']);
+    $email = htmlspecialchars($data['email']);
+    $facebook = htmlspecialchars($data['facebook']);
+    $twitter = htmlspecialchars($data['twitter']);
+    $instagram = htmlspecialchars($data['instagram']);
+    $partai = htmlspecialchars($data['partai']);
+    $jbt_partai = htmlspecialchars($data['jbt_partai']);
+    $tingkat_caleg = htmlspecialchars($data['tingkat_caleg']);
+    $daerah_caleg = htmlspecialchars($data['daerah_caleg']);
+    $daerah_pilih = htmlspecialchars($data['daerah_pilih']);
+    $visi = htmlspecialchars($data['visi']);
+    $misi = htmlspecialchars($data['misi']);
+    $nama_foto_caleg = $dataCaleg['foto'];
+    $nama_foto_ktp = $dataCaleg['foto_ktp'];
+    $nama_foto_tulisan = $dataCaleg['foto_tulisan'];
+    // var_dump($_FILES);
+
+    if ($_FILES['foto_caleg']['size'] != 0 && $_FILES['foto_caleg']['error'] == 0){
+      $foto_caleg = $_FILES['foto_caleg'];
+      $temp = $_FILES['foto_caleg']['tmp_name'];
+      $nama_foto_caleg = uniqid()."_".$_FILES['foto_caleg']['name'];
+      $folderImage = "assets/img/caleg/";
+      $terupload1 = move_uploaded_file($temp, $folderImage.$nama_foto_caleg);
+      // var_dump($foto_caleg);
+
+      // if ($foto_caleg['error'] == 4){
+      //   header("location: ?error=4");
+      //   return false;
+      // }
+    }
+    if ($_FILES['foto_ktp']['size'] != 0 && $_FILES['foto_ktp']['error'] == 0){
+      $foto_ktp = $_FILES['foto_ktp'];
+      $temp = $_FILES['foto_ktp']['tmp_name'];
+      $nama_foto_ktp = uniqid()."_".$_FILES['foto_ktp']['name'];
+      $folderImage2 = "assets/img/ktp/";
+      $terupload2 = move_uploaded_file($temp, $folderImage2.$nama_foto_ktp);
+      // var_dump($foto_ktp);
+
+      // if ($foto_ktp['error'] == 4){
+      //   header("location: ?error=5");
+      //   return false;
+      // }
+    }
+    if ($_FILES['foto_tulisan']['size'] != 0 && $_FILES['foto_tulisan']['error'] == 0){
+      $foto_tulisan = $_FILES['foto_tulisan'];
+      $temp = $_FILES['foto_tulisan']['tmp_name'];
+      $nama_foto_tulisan = uniqid()."_".$_FILES['foto_tulisan']['name'];
+      $folderImage3 = "assets/img/tulisan/";
+      $terupload3 = move_uploaded_file($temp, $folderImage3.$nama_foto_tulisan);
+      // var_dump($foto_tulisan);
+
+      // if ($foto_tulisan['error'] == 4){
+      //   header("location: ?error=6");
+      //   return false;
+      // }
+
+    }
+
+    $queryUpdateCaleg = "
+    UPDATE tb_data_caleg
+    SET
+
+      nik='$nik',
+      nama='$nama',
+      id_partai='$partai',
+      id_jbt_partai='$jbt_partai',
+      tempat_lahir='$tempat_lahir',
+      tanggal_lahir='$tanggal_lahir',
+      id_gender='$gender',
+      id_agama='$agama',
+      id_pend='$pend_akhir',
+      pekerjaan='$pekerjaan',
+      bidang_pend='$bidang_pend',
+      id_kelurahan='$kelurahan',
+      alamat_ktp='$alamat_ktp',
+      alamat_tinggal='$alamat_tinggal',
+      telepon='$telepon',
+      email='$email',
+      facebook='$facebook',
+      twitter='$twitter',
+      instagram='$instagram',
+      tingkat_caleg='$tingkat_caleg',
+      tempat_caleg='$daerah_caleg',
+      daerah_pilih='$daerah_pilih',
+      visi='$visi',
+      misi='$misi',
+      foto='$nama_foto_caleg',
+      foto_ktp='$nama_foto_ktp',
+      foto_tulisan='$nama_foto_tulisan'
+
+    WHERE id='$id'
+    ";
+
+    $updateDataCaleg = mysqli_query($conn, $queryUpdateCaleg);
+
+    $update =  mysqli_affected_rows($conn);
+    // echo $update;
+    // echo mysqli_error($conn);
+
+    if ($update > 0){
+      header("location: profile");
+      exit;
+    }
+  }
+  
 ?>
 
 <!DOCTYPE html>
@@ -122,7 +251,8 @@
                 <!-- Edit User Details Card -->
                 <div class="card card-small edit-user-details mb-4">
                   <div class="card-body p-0">
-                    <form id="formDaftar" method="post" action="profile" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
+                    <form id="formDaftar" method="post" action="profile" enctype="multipart/form-data" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
+                    <input type="text" id="idc" name="idc" value="<?= $dataCaleg['id'] ?>" hidden>
                       <div class="form-row mx-4">
                         <div class="col mb-3">
                           <h6 class="form-text m-0">Umum</h6>
@@ -133,7 +263,7 @@
                         <div class="col-lg-4" style="padding-bottom: 20px;">
                           <label for="foto_caleg" class="text-center w-100 mb-4">Foto Profil</label>
                           <div class="edit-user-details__avatar m-auto" >
-                            <img src="assets/img/caleg/<?= $dataCaleg['foto'] ?>" alt="User Avatar">
+                          <img src="assets/img/caleg/<?= $dataCaleg['foto'] ?>" alt="User Avatar">
                             <label class="edit-user-details__avatar__change">
                               <i class="material-icons mr-1">&#xE439;</i>
                               <input type="file" id="foto_caleg" name="foto_caleg" class="d-none">
@@ -166,7 +296,6 @@
                             <div class="form-group col-md-6">
                               <label for="gender">Jenis Kelamin</label>
                               <div class="input-group input-group-seamless">
-                                <input type="text" class="form-control" name="gender" id="gender" value="<?= $namaGender ?>" hidden>
                                 <select class="form-control" name="gender" id="gender" required>
                                   <?php
                                     $genders = mysqli_query($conn, "SELECT * FROM tb_jenis_kelamin");

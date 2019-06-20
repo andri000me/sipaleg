@@ -159,6 +159,7 @@
                         <?php
                           $partais = mysqli_query($conn, "SELECT * FROM tb_partai");
                         ?>
+                        <option value="">Pilih Partai</option>
                         <?php foreach ($partais as $partai) : ?>
                         <option value="<?= $partai['id'] ?>"><?= $partai['nama_partai'] ?></option>
                       <?php endforeach; ?>
@@ -170,6 +171,8 @@
                         <?php
                           $jbt_partai = mysqli_query($conn, "SELECT * FROM tb_jbt_partai");
                         ?>
+                        
+                        <option value="">Pilih jabatan Partai</option>
                         <?php foreach ($jbt_partai as $jabatan) : ?>
                         <option value="<?= $jabatan['id_jbt_partai'] ?>"><?= $jabatan['nama_jabatan'] ?></option>
                       <?php endforeach; ?>
@@ -183,6 +186,8 @@
                         <?php
                           $genders = mysqli_query($conn, "SELECT * FROM tb_jenis_kelamin");
                         ?>
+                        
+                        <option value="">Pilih Jenis Kelamin</option>
                         <?php foreach ($genders as $gender) : ?>
                         <option value="<?= $gender['id_gender'] ?>"><?= $gender['ket_gender'] ?></option>
                       <?php endforeach; ?>
@@ -193,6 +198,8 @@
                         <?php
                           $agamaAll = mysqli_query($conn, "SELECT * FROM tb_agama");
                         ?>
+                        
+                        <option value="">Pilih Agama</option>
                         <?php foreach ($agamaAll as $agama) : ?>
                         <option value="<?= $agama['id_agama'] ?>" ><?= $agama['nama_agama']; ?></option>
                       <?php endforeach; ?>
@@ -204,6 +211,8 @@
                         <?php
                           $pends = mysqli_query($conn, "SELECT * FROM tb_pendidikan");
                         ?>
+                        
+                        <option value="">Pilih Pendidikan</option>
                         <?php foreach ($pends as $pend) : ?>
                         <option value="<?= $pend['id_pend'] ?>"><?= $pend['nama_pend'] ?></option>
                       <?php endforeach; ?>
@@ -248,6 +257,8 @@
                       <?php
                         $tingkats = mysqli_query($conn, "SELECT * FROM tb_tingkat_caleg");
                       ?>
+                      
+                      <option value="">Pilih Tingkatan Caleg</option>
                       <?php foreach ($tingkats as $tingkat) : ?>
                       <option value="<?= $tingkat['id_tingkat'] ?>"><?= $tingkat['nama_tingkat'] ?></option>
                     <?php endforeach; ?>

@@ -50,10 +50,10 @@
             <div class="text">
                 <h2>SISTEM PENDAFTARAN CALON LEGISLATIF</h2>
                 <p>Situs pendaftaran, Informasi, dan Poling Calon Legislatif</p><button
-                    class="btn btn-outline-light btn-lg" type="button">Tampilkan</button>
+                    class="btn btn-outline-light btn-lg" onclick="location.href = '#daftar'" type="button">Tampilkan</button>
             </div>
         </section>
-        <section class="clean-block clean-info dark">
+        <section class="clean-block clean-info dark" id="daftar">
             <div class="container">
                 <div class="block-heading">
                     <h2 class="text-info"><i class="icon-info"></i>&nbsp;Informasi Pendaftaran</h2>
@@ -68,8 +68,8 @@
                             <p>Syarat Pendaftar CALEG :<br>1. Berumur diatas 25 tahun<br>2. Berasal dari partai
                                 pengusung terdaftar.<br>3. Sehat jasmani dan rohani<br>4. Mengisi berkas yang
                                 dibutuhkan.</p>
-                        </div><button class="btn btn-outline-primary btn-lg" type="button"><a
-                                href="./pendaftaran">DAFTAR SEKARANG</a></button>
+                        </div><button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href = 'pendaftaran'">
+                            DAFTAR SEKARANG</button>
                     </div>
                 </div>
             </div>

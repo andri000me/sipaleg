@@ -235,7 +235,12 @@
 </style>
 <style>
         .edit-user-details__avatar {
-          max-width: 200px;
+          max-width: 300px;
+          height: 300px;
+        }
+        .edit-user-details__avatar img{
+          width: auto;
+          height: 300px;
         }
         .edit-user-details__avatar__change i {
             line-height: 150px;
@@ -419,7 +424,7 @@
                         <div class="form-group col-md-6">
                             <label for="provinsi">Provinsi</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_provinsi" id="nama_provinsi" hidden>
+                            <input class="form-control" type="text" name="nama_provinsi" id="nama_provinsi" value="<?= $namaPro ?>" style="display: none;" hidden>
                             <select class="form-control" name="provinsi" id="provinsi"  required>
                               <option value="0">Pilih Provinsi</option>
                             </select>
@@ -428,7 +433,7 @@
                         <div class="form-group col-md-6">
                             <label for="kabupaten">Kabupaten</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kabupaten" id="nama_kabupaten" hidden>
+                            <input class="form-control" type="text" name="nama_kabupaten" id="nama_kabupaten" value="<?= $namaKab ?>" style="display: none;" hidden>
                             <select class="form-control" name="kabupaten" id="kabupaten" required>
                               <option value="">Pilih Kabupaten</option>
                             </select>
@@ -437,8 +442,7 @@
                         <div class="form-group col-md-6">
                             <label for="kecataman">Kecamatan</label>
                             <div class="input-group input-group-seamless">
-                              <input class="form-control" type="text" name="nama_kecamatan" id="nama_kecamatan" hidden>
-                      
+                              <input class="form-control" type="text" name="nama_kecamatan" id="nama_kecamatan" value="<?= $namaKec ?>" style="display: none;" hidden>
                             <select class="form-control" name="kecamatan" id="kecamatan" required>
                               <option value="">Pilih Kecamatan</option>
                             </select>
@@ -447,8 +451,8 @@
                         <div class="form-group col-md-6">
                             <label for="kelurahan">Kelurahan</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kelurahan" id="nama_kelurahan" hidden>
-                            <select class="form-control" name="kelurahan" id="kelurahan" required>
+                            <input class="form-control" type="text" name="nama_kelurahan" id="nama_kelurahan" value="<?= $namaKel ?>" style="display: none;" hidden>
+                            <select class="form-control" name="kelurahan" id="kelurahan"   required>
                               <option value="">Pilih Kelurahan</option>
                             </select>
                             </div>
@@ -782,7 +786,6 @@
         });
         
         $("#provinsi").ready(function() {
-          $("#nama_provinsi").attr('value', $("#provinsi").children("option:selected").text());
           var propinsi = $("#provinsi").val();
           $.ajax({
               url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kabupaten',
@@ -805,7 +808,6 @@
           });
         });
         $("#kabupaten").ready(function() {
-          $("#nama_kabupaten").attr('value', $("#kabupaten").children("option:selected").text());
           var propinsi = $("#provinsi").val();
           var kabupaten = $("#kabupaten").val();
           $.ajax({
@@ -830,7 +832,6 @@
         });
 
         $("#kecamatan").ready(function() {
-          $("#nama_kecamatan").attr('value', $("#kecamatan").children("option:selected").text());
           var propinsi = $("#provinsi").val();
           var kabupaten = $("#kabupaten").val();
           var kecamatan = $("#kecamatan").val();
@@ -853,10 +854,6 @@
                 }
               }
           });
-        });
-
-        $("#kelurahan").ready(function() {
-          $("#nama_kelurahan").attr('value', $("#kelurahan").children("option:selected").text());
         });
       });
     </script>

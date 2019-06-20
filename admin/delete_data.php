@@ -16,6 +16,7 @@
         $idCaleg = $_GET['caleg'];
         
         $deleteCalegFamily = mysqli_query($conn, "DELETE FROM tb_anggota_keluarga WHERE id_caleg='$idCaleg'");
+        $addLogCaleg = mysqli_query($conn, "INSERT INTO tb_delete_caleg SELECT * FROM tb_data_caleg WHERE id='$idCaleg'");
         $deleteCaleg = mysqli_query($conn, "DELETE FROM tb_data_caleg WHERE id='$idCaleg'");
         $del = mysqli_affected_rows($conn);
         if ($del > 0) {

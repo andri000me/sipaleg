@@ -90,7 +90,11 @@
 </style>
 <style>
         .edit-user-details__avatar {
-          max-width: 200px;
+          max-width: 300px;
+          height: 300px;
+        }
+        .edit-user-details__avatar img{
+          height: 300px;
         }
         .edit-user-details__avatar__change i {
             line-height: 150px;
@@ -161,7 +165,14 @@
                 <!-- Edit User Details Card -->
                 <div class="card card-small edit-user-details mb-4">
                   <div class="card-body p-0">
+                    <div class="card-footer border-top" id='btn_save'>
+                      <button class="btn btn-sm btn-accent ml-auto d-table mr-3">Prev Caleg
+                      </button>
+                      <button class="btn btn-sm btn-accent ml-auto d-table mr-3">Next Caleg
+                      </button>
+                    </div>
                     <form id="formDaftar" method="post" action="edit_caleg" enctype="multipart/form-data" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
+                    
                     <input type="text" id="idc" name="idc" value="<?= $dataCaleg['id'] ?>" hidden>
                       <div class="form-row mx-4" style="margin-top: 20px;">
                         <div class="col mb-3">
@@ -273,7 +284,6 @@
                         <div class="form-group col-md-6">
                             <label for="provinsi">Provinsi</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_provinsi" id="nama_provinsi" hidden>
                             <select class="form-control" name="provinsi" id="provinsi"  required>
                               <option value="0">Pilih Provinsi</option>
                             </select>
@@ -282,7 +292,6 @@
                         <div class="form-group col-md-6">
                             <label for="kabupaten">Kabupaten</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kabupaten" id="nama_kabupaten" hidden>
                             <select class="form-control" name="kabupaten" id="kabupaten" required>
                               <option value="">Pilih Kabupaten</option>
                             </select>
@@ -291,8 +300,6 @@
                         <div class="form-group col-md-6">
                             <label for="kecataman">Kecamatan</label>
                             <div class="input-group input-group-seamless">
-                              <input class="form-control" type="text" name="nama_kecamatan" id="nama_kecamatan" hidden>
-                      
                             <select class="form-control" name="kecamatan" id="kecamatan" required>
                               <option value="">Pilih Kecamatan</option>
                             </select>
@@ -301,7 +308,6 @@
                         <div class="form-group col-md-6">
                             <label for="kelurahan">Kelurahan</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kelurahan" id="nama_kelurahan" hidden>
                             <select class="form-control" name="kelurahan" id="kelurahan" required>
                               <option value="">Pilih Kelurahan</option>
                             </select>
@@ -450,17 +456,19 @@
                         <div class="form-group col-md-6">
                             <label for="foto_ktp">Foto KTP</label>
                             <div class="input-group input-group-seamless">
-                              <img src="../assets/img/ktp/<?= $dataCaleg['foto_ktp'] ?>" alt="<?= $dataCaleg['foto_ktp'] ?>" class="img-thumbnail" style="max-height: 50px;">&nbsp;<span class="text-danger"><?= $error1 ?></span>
+                              <img src="../assets/img/ktp/<?= $dataCaleg['foto_ktp'] ?>" alt="<?= $dataCaleg['foto_ktp'] ?>" class="img-thumbnail" style="max-width: 300px;">&nbsp;<span class="text-danger"><?= $error1 ?></span>
                               <br>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="foto_tulisan">Foto Tulisan 1 halaman</label>
                             <div class="input-group input-group-seamless">
-                              <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-height: 50px;">&nbsp;<span class="text-danger"><?= $error2 ?></span>
+                              <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-width: 300px;">&nbsp;<span class="text-danger"><?= $error2 ?></span>
                               <br>
                             </div>
                         </div>
+                      <div class="card-footer border-top" id='btn_save'>
+                      <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-width: 300px; display: none">&nbsp;</div>
                       </div>
                     </form>
                   </div>

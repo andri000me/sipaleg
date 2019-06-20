@@ -122,7 +122,7 @@
                 <!-- Edit User Details Card -->
                 <div class="card card-small edit-user-details mb-4">
                   <div class="card-body p-0">
-                    <form id="formDaftar" action="#" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
+                    <form id="formDaftar" method="post" action="profile" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
                       <div class="form-row mx-4">
                         <div class="col mb-3">
                           <h6 class="form-text m-0">Umum</h6>
@@ -234,25 +234,33 @@
                         <div class="form-group col-md-6">
                             <label for="provinsi">Provinsi</label>
                             <div class="input-group input-group-seamless">
-                                <input type="text" class="form-control" name="provinsi" id="provinsi" value="<?= $namaPro ?>">
+                            <select class="form-control" name="provinsi" id="provinsi"  required>
+                              <option value="0">Pilih Provinsi</option>
+                            </select>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="kabupaten">Kabupaten</label>
                             <div class="input-group input-group-seamless">
-                                <input type="text" class="form-control" name="kabupaten" id="kabupaten" value="<?= $namaKab ?>">
+                            <select class="form-control" name="kabupaten" id="kabupaten" required>
+                              <option value="">Pilih Kabupaten</option>
+                            </select>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="kecataman">Kecamatan</label>
                             <div class="input-group input-group-seamless">
-                                <input type="text" class="form-control" name="kecataman" id="kecataman" value="<?= $namaKec ?>">
+                            <select class="form-control" name="kecamatan" id="kecamatan" required>
+                              <option value="">Pilih Kecamatan</option>
+                            </select>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="kelurahan">Kelurahan</label>
                             <div class="input-group input-group-seamless">
-                                <input type="text" class="form-control" name="kelurahan" id="kelurahan" value="<?= $namaKel ?>">
+                            <select class="form-control" name="kelurahan" id="kelurahan" required>
+                              <option value="">Pilih Kelurahan</option>
+                            </select>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
@@ -411,10 +419,13 @@
                             </div>
                         </div>
                       </div>
-                        <div class="card-footer border-top">
-                            <button type="submit" class="btn btn-sm btn-accent ml-auto d-table mr-3">Save Changes</button>
+                        <div class="card-footer border-top" id='btn_save' hidden>
+                            <button id='save' name='save' type="submit" class="btn btn-sm btn-accent ml-auto d-table mr-3">Save Changes</button>
                         </div>
                     </form>
+                    <div class="card-footer border-top" id="btn_edit">
+                      <button id='edit' name='edit' class="btn btn-sm btn-accent ml-auto d-table mr-3"><a href="?edit" class="btn-primary">Edit Profil</a></button>
+                    </div>
                   </div>
                 </div>
                 <!-- End Edit User Details Card -->
@@ -468,10 +479,227 @@
     <script src="assets/js/smoothproducts.min.js"></script>
     <script src="assets/js/theme.js"></script>
     <script>
-      console.log('<?= $enableEdit ?>');
+      // console.log('<?= $enableEdit ?>');
       if ('<?= $enableEdit ?>' == "disable") {
         $('#formDaftar :input').prop('disabled', true);
+        $('#edit').prop('disabled', false);
+      }else{
+        $('#btn_save').prop('hidden', false);
+        $('#btn_edit').prop('hidden', true);
       }
+    </script>
+    <script>
+      var return_first = function() {
+          var tmp = null;
+          $.ajax({
+              'async': false,
+              'type': "get",
+              'global': false,
+              'dataType': 'json',
+              'url': 'https://x.rajaapi.com/poe',
+              'success': function(data) {
+                  tmp = data.token;
+              }
+          });
+          return tmp;
+      }();
+
+      $(document).ready(function() {
+        $.ajax({
+          url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/provinsi',
+          type: 'GET',
+          dataType: 'json',
+          success: function(json) {
+            if (json.code == 200) {
+                for (i = 0; i < Object.keys(json.data).length; i++) {
+                    $('#provinsi').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                }
+            } else {
+                $('#provinsi').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+            }
+          }
+        });
+        
+        $("#provinsi").change(function() {
+          var propinsi = $("#provinsi").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kabupaten',
+              data: "idpropinsi=" + propinsi,
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kabupaten").html('');
+                if (json.code == 200) {
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                        $('#kabupaten').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                    }
+                } else {
+                    $('#kabupaten').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+        $("#kabupaten").change(function() {
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kecamatan',
+              data: "idkabupaten=" + kabupaten + "&idpropinsi=" + propinsi,
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kecamatan").html('');
+                if (json.code == 200) {
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                        $('#kecamatan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                    }
+                } else {
+                    $('#kecamatan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kecamatan").change(function() {
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          var kecamatan = $("#kecamatan").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kelurahan',
+              data: "idkabupaten=" + kabupaten + "&idpropinsi=" + propinsi + "&idkecamatan=" + kecamatan,
+              type: 'GET',
+              dataType: 'json',
+              cache: false,
+              success: function(json) {
+                $("#kelurahan").html('');
+                if (json.code == 200) {
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                        $('#kelurahan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                    }
+                } else {
+                    $('#kelurahan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kelurahan").change(function() {
+          $("#nama_kelurahan").attr('value', $("#kelurahan").children("option:selected").text());
+        });
+      });
+    </script>
+    <script>
+      var return_first = function() {
+          var tmp = null;
+          $.ajax({
+              'async': false,
+              'type': "get",
+              'global': false,
+              'dataType': 'json',
+              'url': 'https://x.rajaapi.com/poe',
+              'success': function(data) {
+                  tmp = data.token;
+              }
+          });
+          return tmp;
+      }();
+
+      $(document).ready(function() {
+        $.ajax({
+          url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/provinsi',
+          type: 'GET',
+          dataType: 'json',
+          success: function(json) {
+            if (json.code == 200) {
+                    var idProvSelected = '<?= $id_prov ?>';
+                for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idProv = String(json.data[i].id);
+                    $('#provinsi').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idProv == idProvSelected ? true : false)));
+                    
+                }
+            } else {
+                $('#provinsi').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+            }
+          }
+        });
+        
+        $("#provinsi").ready(function() {
+          var propinsi = $("#provinsi").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kabupaten',
+              data: "idpropinsi=" + '<?= $id_prov ?>',
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kabupaten").html('');
+                if (json.code == 200) {
+                    var idKabSelected = '<?= $id_kab ?>';
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idKab = String(json.data[i].id);
+                        $('#kabupaten').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idKab == idKabSelected ? true : false)));
+                    }
+                } else {
+                    $('#kabupaten').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+        $("#kabupaten").ready(function() {
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kecamatan',
+              data: "idkabupaten=" + '<?= $id_kab ?>' + "&idpropinsi=" + '<?= $id_prov ?>',
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kecamatan").html('');
+                if (json.code == 200) {
+                    var idKecSelected = '<?= $id_kec ?>';
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idKec = String(json.data[i].id);
+                        $('#kecamatan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idKec == idKecSelected ? true : false)));
+                    }
+                } else {
+                    $('#kecamatan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kecamatan").ready(function() {
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          var kecamatan = $("#kecamatan").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kelurahan',
+              data: "idkabupaten=" + '<?= $id_kab ?>' + "&idpropinsi=" + '<?= $id_prov ?>' + "&idkecamatan=" + '<?= $id_kec ?>',
+              type: 'GET',
+              dataType: 'json',
+              cache: false,
+              success: function(json) {
+                $("#kelurahan").html('');
+                if (json.code == 200) {
+                    var idKelSelected = '<?= $id_kel ?>';
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idKel = String(json.data[i].id);
+                        $('#kelurahan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idKel == idKelSelected ? true : false)));
+                    }
+                } else {
+                    $('#kelurahan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kelurahan").change(function() {
+          $("#nama_kelurahan").attr('value', $("#kelurahan").children("option:selected").text());
+        });
+      });
     </script>
 </body>
 

@@ -5,13 +5,48 @@
   $login = sessionChecker();
 
   if ($login != 1){
-    header("location: index");
-    exit;
+    echo "
+      <script>
+        alert('silahkan login dulu.');
+        location.href = 'login';
+      </script>
+    ";
   }
 
+  $uname = $_SESSION['username'];
+  $result = mysqli_query($conn, "SELECT * FROM tb_data_caleg WHERE username='$uname'");
+  $getDaftar = mysqli_num_rows($result);
+  $dataCaleg = mysqli_fetch_assoc($result);
+
+  $id_kel = $dataCaleg['id_kelurahan'];
+  $id_kec = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kelurahan WHERE id_kelurahan='$id_kel'"))['id_kecamatan'];
+  $id_kab = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kecamatan WHERE id_kecamatan='$id_kec'"))['id_kabupaten'];
+  $id_prov = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kabupaten WHERE id_kabupaten='$id_kab'"))['id_provinsi'];
+
+  $namaKel = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kelurahan WHERE id_kelurahan='$id_kel'"))['nama_kelurahan'];
+  $namaKec = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kecamatan WHERE id_kecamatan='$id_kec'"))['nama_kecamatan'];
+  $namaKab = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kabupaten WHERE id_kabupaten='$id_kab'"))['nama_kab'];
+  $namaPro = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_provinsi WHERE id_provinsi='$id_prov'"))['nama_prov'];
+
+  $idPartai = $dataCaleg['id_partai'];
+  $namaPartai = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_partai WHERE id='$idPartai'"))['nama_partai'];
+
+  $idJbtPartai = $dataCaleg['id_jbt_partai'];
+  $namaJbtPartai = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_jbt_partai WHERE id_jbt_partai='$idJbtPartai'"))['nama_jabatan'];
+
+  $idGender = $dataCaleg['id_gender'];
+  $namaGender = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_jenis_kelamin WHERE id_gender='$idGender'"))['ket_gender'];
+
+  $idAgama = $dataCaleg['id_agama'];
+  $namaAgama = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_agama WHERE id_agama='$idAgama'"))['nama_agama'];
   
+  $idPend = $dataCaleg['id_pend'];
+  $namaPend = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_pendidikan WHERE id_pend='$idPend'"))['nama_pend'];
+  
+  $idTingkat = $dataCaleg['tingkat_caleg'];
+  $namaTingkat = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_tingkat_caleg WHERE id_tingkat='$idTingkat'"))['nama_tingkat'];
 
-
+  
 ?>
 
 <!DOCTYPE html>

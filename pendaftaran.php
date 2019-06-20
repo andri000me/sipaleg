@@ -53,6 +53,7 @@
   // var_dump($id_kel, $id_kec, $id_kab, $id_prov);
   
   $today = date("Y-m-d");
+  
   if ($getDaftar > 0) {
     $today = $dataCaleg['tanggal_daftar'];
   }

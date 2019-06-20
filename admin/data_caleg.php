@@ -224,7 +224,7 @@
                    <img style="max-height: 50px;" src="../assets/img/caleg/<?= $caleg['foto'] ?>" class="avatar"
 	                   alt="Avatar+<?= $i ?>">
 	               </td>
-                  <td><?= $caleg['nama'] ?></td>
+                  <td><a href="view_caleg?caleg=<?= $caleg['id'] ?>"><?= $caleg['nama'] ?></a></td>
 	               <td><?= $caleg['nik'] ?></td>
 	               <?php 
                     $idTingkat = $caleg['tingkat_caleg'];

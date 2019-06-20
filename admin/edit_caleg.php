@@ -1,21 +1,220 @@
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
+<?php
+  session_start();
+  require '../functions.php';
+  $login = sessionChecker();
+
+  $loginAdmin = sessionCheckerAdmin();
+
+  if ($loginAdmin != 1){
+    header("Location: login");
+    exit;
+  }
+  
+  $error1 = "";
+  $error2 = "";
+
+
+  $uname = $_SESSION['usernameAdmin'];
+  $admin = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_admin WHERE username='$uname'"));
+  
+  $idC = $_GET['caleg'];
+  $result = mysqli_query($conn, "SELECT * FROM tb_data_caleg WHERE id='$idC'");
+  $getDaftar = mysqli_num_rows($result);
+  $dataCaleg = mysqli_fetch_assoc($result);
+
+  $id_kel = $dataCaleg['id_kelurahan'];
+  $id_kec = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kelurahan WHERE id_kelurahan='$id_kel'"))['id_kecamatan'];
+  $id_kab = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kecamatan WHERE id_kecamatan='$id_kec'"))['id_kabupaten'];
+  $id_prov = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kabupaten WHERE id_kabupaten='$id_kab'"))['id_provinsi'];
+
+  $namaKel = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kelurahan WHERE id_kelurahan='$id_kel'"))['nama_kelurahan'];
+  $namaKec = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kecamatan WHERE id_kecamatan='$id_kec'"))['nama_kecamatan'];
+  $namaKab = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_kabupaten WHERE id_kabupaten='$id_kab'"))['nama_kab'];
+  $namaPro = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_provinsi WHERE id_provinsi='$id_prov'"))['nama_prov'];
+
+  $idPartai = $dataCaleg['id_partai'];
+  $namaPartai = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_partai WHERE id='$idPartai'"))['nama_partai'];
+
+  $idJbtPartai = $dataCaleg['id_jbt_partai'];
+  $namaJbtPartai = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_jbt_partai WHERE id_jbt_partai='$idJbtPartai'"))['nama_jabatan'];
+
+  $idGender = $dataCaleg['id_gender'];
+  $namaGender = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_jenis_kelamin WHERE id_gender='$idGender'"))['ket_gender'];
+
+  $idAgama = $dataCaleg['id_agama'];
+  $namaAgama = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_agama WHERE id_agama='$idAgama'"))['nama_agama'];
+  
+  $idPend = $dataCaleg['id_pend'];
+  $namaPend = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_pendidikan WHERE id_pend='$idPend'"))['nama_pend'];
+  
+  $idTingkat = $dataCaleg['tingkat_caleg'];
+  $namaTingkat = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tb_tingkat_caleg WHERE id_tingkat='$idTingkat'"))['nama_tingkat'];
+
+  
+
+  if (isset($_POST['save'])){
+
+    $data = $_POST;
+    $provinsi = htmlspecialchars($data['provinsi']);
+    $kabupaten = htmlspecialchars($data['kabupaten']);
+    $kecamatan = htmlspecialchars($data['kecamatan']);
+
+    
+    $nama_provinsi = htmlspecialchars($data['nama_provinsi']);
+    $nama_kabupaten = htmlspecialchars($data['nama_kabupaten']);
+    $nama_kecamatan = htmlspecialchars($data['nama_kecamatan']);
+    $nama_kelurahan = htmlspecialchars($data['nama_kelurahan']);
+
+    $id = htmlspecialchars($data['idc']);
+    $result = mysqli_query($conn, "SELECT * FROM tb_data_caleg WHERE id='$id'");
+    $getDaftar = mysqli_num_rows($result);
+    $dataCaleg = mysqli_fetch_assoc($result);
+    $tanggal_daftar = '';
+    $nik = htmlspecialchars($data['nik']);
+    $nama = htmlspecialchars($data['nama']);
+    $tempat_lahir = htmlspecialchars($data['tempat_lahir']);
+    $tanggal_lahir = htmlspecialchars($data['tanggal_lahir']);
+    $gender = htmlspecialchars($data['gender']);
+    $agama = htmlspecialchars($data['agama']);
+    $pend_akhir = htmlspecialchars($data['pend_akhir']);
+    $bidang_pend = htmlspecialchars($data['bidang_pend']);
+    $pekerjaan = htmlspecialchars($data['pekerjaan']);
+    $kelurahan = htmlspecialchars($data['kelurahan']);
+    $alamat_ktp = htmlspecialchars($data['alamat_ktp']);
+    $alamat_tinggal = htmlspecialchars($data['alamat_tinggal']);
+    $telepon = htmlspecialchars($data['telepon']);
+    $email = htmlspecialchars($data['email']);
+    $facebook = htmlspecialchars($data['facebook']);
+    $twitter = htmlspecialchars($data['twitter']);
+    $instagram = htmlspecialchars($data['instagram']);
+    $partai = htmlspecialchars($data['partai']);
+    $jbt_partai = htmlspecialchars($data['jbt_partai']);
+    $tingkat_caleg = htmlspecialchars($data['tingkat_caleg']);
+    $daerah_caleg = htmlspecialchars($data['daerah_caleg']);
+    $daerah_pilih = htmlspecialchars($data['daerah_pilih']);
+    $visi = htmlspecialchars($data['visi']);
+    $misi = htmlspecialchars($data['misi']);
+    $nama_foto_caleg = $dataCaleg['foto'];
+    $nama_foto_ktp = $dataCaleg['foto_ktp'];
+    $nama_foto_tulisan = $dataCaleg['foto_tulisan'];
+    // var_dump($_FILES);
+
+    if ($_FILES['foto_caleg']['size'] != 0 && $_FILES['foto_caleg']['error'] == 0){
+      $foto_caleg = $_FILES['foto_caleg'];
+      $temp = $_FILES['foto_caleg']['tmp_name'];
+      $nama_foto_caleg = uniqid()."_".$_FILES['foto_caleg']['name'];
+      $folderImage = "../assets/img/caleg/";
+      $terupload1 = move_uploaded_file($temp, $folderImage.$nama_foto_caleg);
+      // var_dump($foto_caleg);
+
+      // if ($foto_caleg['error'] == 4){
+      //   header("location: ?error=4");
+      //   return false;
+      // }
+    }
+    if ($_FILES['foto_ktp']['size'] != 0 && $_FILES['foto_ktp']['error'] == 0){
+      $foto_ktp = $_FILES['foto_ktp'];
+      $temp = $_FILES['foto_ktp']['tmp_name'];
+      $nama_foto_ktp = uniqid()."_".$_FILES['foto_ktp']['name'];
+      $folderImage2 = "../assets/img/ktp/";
+      $terupload2 = move_uploaded_file($temp, $folderImage2.$nama_foto_ktp);
+      // var_dump($foto_ktp);
+
+      // if ($foto_ktp['error'] == 4){
+      //   header("location: ?error=5");
+      //   return false;
+      // }
+    }
+    if ($_FILES['foto_tulisan']['size'] != 0 && $_FILES['foto_tulisan']['error'] == 0){
+      $foto_tulisan = $_FILES['foto_tulisan'];
+      $temp = $_FILES['foto_tulisan']['tmp_name'];
+      $nama_foto_tulisan = uniqid()."_".$_FILES['foto_tulisan']['name'];
+      $folderImage3 = "../assets/img/tulisan/";
+      $terupload3 = move_uploaded_file($temp, $folderImage3.$nama_foto_tulisan);
+      // var_dump($foto_tulisan);
+
+      // if ($foto_tulisan['error'] == 4){
+      //   header("location: ?error=6");
+      //   return false;
+      // }
+
+    }
+
+    $queryProv = "INSERT INTO tb_provinsi VALUES ('$provinsi', '$nama_provinsi')";
+    $queryKab = "INSERT INTO tb_kabupaten VALUES ('$kabupaten', '$provinsi', '$nama_kabupaten')";
+    $queryKec = "INSERT INTO tb_kecamatan VALUES ('$kecamatan', '$kabupaten', '$nama_kecamatan')";
+    $queryKel = "INSERT INTO tb_kelurahan VALUES ('$kelurahan', '$kecamatan', '$nama_kelurahan')";
+
+
+    $queryUpdateCaleg = "
+    UPDATE tb_data_caleg
+    SET
+
+      nik='$nik',
+      nama='$nama',
+      id_partai='$partai',
+      id_jbt_partai='$jbt_partai',
+      tempat_lahir='$tempat_lahir',
+      tanggal_lahir='$tanggal_lahir',
+      id_gender='$gender',
+      id_agama='$agama',
+      id_pend='$pend_akhir',
+      pekerjaan='$pekerjaan',
+      bidang_pend='$bidang_pend',
+      id_kelurahan='$kelurahan',
+      alamat_ktp='$alamat_ktp',
+      alamat_tinggal='$alamat_tinggal',
+      telepon='$telepon',
+      email='$email',
+      facebook='$facebook',
+      twitter='$twitter',
+      instagram='$instagram',
+      tingkat_caleg='$tingkat_caleg',
+      tempat_caleg='$daerah_caleg',
+      daerah_pilih='$daerah_pilih',
+      visi='$visi',
+      misi='$misi',
+      foto='$nama_foto_caleg',
+      foto_ktp='$nama_foto_ktp',
+      foto_tulisan='$nama_foto_tulisan'
+
+    WHERE id='$id'
+    ";
+
+    $updateDataCaleg = mysqli_query($conn, $queryUpdateCaleg);
+
+    $update =  mysqli_affected_rows($conn);
+    // echo $update;
+    // echo mysqli_error($conn);
+
+    // if ($update > 0){
+    //   header("location: profile");
+    //   exit;
+    // }
+  }
+
+  
+  if (empty($_GET['caleg'])){
+    header("location: data_caleg");
+    exit;
+  }
+  
+?>
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Modern an Admin Panel Category Flat Bootstarp Resposive Website Template | Validation :: w3layouts</title>
+<title>User Management | SIPALEG ADMIN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Modern Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
- <!-- Bootstrap Core CSS -->
-<link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://designrevision.com/demo/shards-dashboards/styles/shards-dashboards.1.3.1.min.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+ 
 <link href="css/style.css" rel='stylesheet' type='text/css' />
 <link href="css/font-awesome.css" rel="stylesheet"> 
 <!-- jQuery -->
@@ -25,249 +224,406 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!---//webfonts--->  
 <!-- Bootstrap Core JavaScript -->
 <script src="js/bootstrap.min.js"></script>
+
+<style>
+  .form-control{
+    border: 1px solid #aaa !important;
+  }
+  .nav{
+    font-family: 'Roboto', sans-serif;
+  }
+</style>
+<style>
+        .edit-user-details__avatar {
+          max-width: 200px;
+        }
+        .edit-user-details__avatar__change i {
+            line-height: 150px;
+        }
+        .form-text {
+            color: blue;
+        }
+    </style>
+
 </head>
 <body>
 <div id="wrapper">
      <!-- Navigation -->
-        <nav class="top1 navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Modern</a>
-            </div>
-            <!-- /.navbar-header -->
-            <ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-	        		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-comments-o"></i><span class="badge">4</span></a>
-	        		<ul class="dropdown-menu">
-						<li class="dropdown-menu-header">
-							<strong>Messages</strong>
-							<div class="progress thin">
-							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-							    <span class="sr-only">40% Complete (success)</span>
-							  </div>
-							</div>
-						</li>
-						<li class="avatar">
-							<a href="#">
-								<img src="images/1.png" alt=""/>
-								<div>New message</div>
-								<small>1 minute ago</small>
-								<span class="label label-info">NEW</span>
-							</a>
-						</li>
-						<li class="avatar">
-							<a href="#">
-								<img src="images/2.png" alt=""/>
-								<div>New message</div>
-								<small>1 minute ago</small>
-								<span class="label label-info">NEW</span>
-							</a>
-						</li>
-						<li class="avatar">
-							<a href="#">
-								<img src="images/3.png" alt=""/>
-								<div>New message</div>
-								<small>1 minute ago</small>
-							</a>
-						</li>
-						<li class="avatar">
-							<a href="#">
-								<img src="images/4.png" alt=""/>
-								<div>New message</div>
-								<small>1 minute ago</small>
-							</a>
-						</li>
-						<li class="avatar">
-							<a href="#">
-								<img src="images/5.png" alt=""/>
-								<div>New message</div>
-								<small>1 minute ago</small>
-							</a>
-						</li>
-						<li class="avatar">
-							<a href="#">
-								<img src="images/pic1.png" alt=""/>
-								<div>New message</div>
-								<small>1 minute ago</small>
-							</a>
-						</li>
-						<li class="dropdown-menu-footer text-center">
-							<a href="#">View all messages</a>
-						</li>	
-	        		</ul>
-	      		</li>
-			    <li class="dropdown">
-	        		<a href="#" class="dropdown-toggle avatar" data-toggle="dropdown"><img src="images/1.png" alt=""/><span class="badge">9</span></a>
-	        		<ul class="dropdown-menu">
-						<li class="dropdown-menu-header text-center">
-							<strong>Account</strong>
-						</li>
-						<li class="m_2"><a href="#"><i class="fa fa-bell-o"></i> Updates <span class="label label-info">42</span></a></li>
-						<li class="m_2"><a href="#"><i class="fa fa-envelope-o"></i> Messages <span class="label label-success">42</span></a></li>
-						<li class="m_2"><a href="#"><i class="fa fa-tasks"></i> Tasks <span class="label label-danger">42</span></a></li>
-						<li><a href="#"><i class="fa fa-comments"></i> Comments <span class="label label-warning">42</span></a></li>
-						<li class="dropdown-menu-header text-center">
-							<strong>Settings</strong>
-						</li>
-						<li class="m_2"><a href="#"><i class="fa fa-user"></i> Profile</a></li>
-						<li class="m_2"><a href="#"><i class="fa fa-wrench"></i> Settings</a></li>
-						<li class="m_2"><a href="#"><i class="fa fa-usd"></i> Payments <span class="label label-default">42</span></a></li>
-						<li class="m_2"><a href="#"><i class="fa fa-file"></i> Projects <span class="label label-primary">42</span></a></li>
-						<li class="divider"></li>
-						<li class="m_2"><a href="#"><i class="fa fa-shield"></i> Lock Profile</a></li>
-						<li class="m_2"><a href="#"><i class="fa fa-lock"></i> Logout</a></li>	
-	        		</ul>
-	      		</li>
-			</ul>
-			<form class="navbar-form navbar-right">
-              <input type="text" class="form-control" value="Search..." onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search...';}">
-            </form>
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-                        <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw nav_icon"></i>Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-laptop nav_icon"></i>Layouts<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="grids.html">Grid System</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-indent nav_icon"></i>Menu Levels<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="graphs.html">Graphs</a>
-                                </li>
-                                <li>
-                                    <a href="typography.html">Typography</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-envelope nav_icon"></i>Mailbox<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="inbox.html">Inbox</a>
-                                </li>
-                                <li>
-                                    <a href="compose.html">Compose email</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="widgets.html"><i class="fa fa-flask nav_icon"></i>Widgets</a>
-                        </li>
-                         <li>
-                            <a href="#"><i class="fa fa-check-square-o nav_icon"></i>Forms<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="forms.html">Basic Forms</a>
-                                </li>
-                                <li>
-                                    <a href="validation.html">Validation</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-table nav_icon"></i>Tables<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="basic_tables.html">Basic Tables</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-sitemap fa-fw nav_icon"></i>Css<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="media.html">Media</a>
-                                </li>
-                                <li>
-                                    <a href="login.html">Login</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            </div>
-            <!-- /.navbar-static-side -->
-        </nav>
+     <nav class="top1 navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0; background-color: red; height: 60px;">
+      <div class="navbar-header" style="margin-top: -10px;">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Admin SIPALEG</a>
+      </div>
+      <!-- /.navbar-header -->
+      <ul class="nav navbar-nav navbar-right" style="margin-top: -10px;">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown"><img src="../assets/img/admin/<?= $admin['foto_admin'] ?>"></a>
+          <ul class="dropdown-menu">
+            <li class="m_2"><a href="logout"><i class="fa fa-lock"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="navbar-default sidebar" role="navigation" style="top: 60px; width: 200px; left: 0;">
+        <div class="sidebar-nav navbar-collapse" style="margin-top: -15px;">
+          <ul class="nav" id="side-menu">
+            <li>
+              <a href="index"><i class="fa fa-dashboard fa-fw nav_icon"></i>Dashboard</a>
+            </li>
+            <li>
+              <br>
+            </li>
+            <li>
+              <a href="data_caleg"><i class="fa fa-list fa-fw nav_icon"></i>Data Caleg</a>
+            </li>
+            <li>
+              <a href="partai"><i class="fa fa-flag fa-fw nav_icon"></i>Data Partai</a>
+            </li>
+            <li>
+              <a href="data_user"><i class="fa fa-user fa-fw nav_icon"></i>Data User</a>
+            </li>
+            <li>
+              <a href="data_admin"><i class="fa fa-user fa-fw nav_icon"></i>Data Admin</a>
+            </li>
+          </ul>
+        </div>
+        <!-- /.sidebar-collapse -->
+      </div>
+      <!-- /.navbar-static-side -->
+    </nav>
+
         <div id="page-wrapper">
         <div class="col-md-12 graphs">
-	   <div class="xs">
-  	    <h3>Validation</h3>
-  	    <div class="well1 white">
-        <form class="form-floating ng-pristine ng-invalid ng-invalid-required ng-valid-email ng-valid-url ng-valid-pattern" novalidate="novalidate" ng-submit="submit()">
-          <fieldset>
-            <div class="form-group">
-              <label class="control-label">Required</label>
-              <input type="text" class="form-control1 ng-invalid ng-invalid-required ng-touched" ng-model="model.name" required="">
+	     <div class="bs-example4" data-example-id="contextual-table">
+      
+       <div class="main-navbar sticky-top bg-white">
+          <div class="main-content-container container-fluid px-4">
+            <div class="row" style="margin-top: 20px;">
+                <!-- Edit User Details Card -->
+                <div class="card card-small edit-user-details mb-4">
+                  <div class="card-body p-0">
+                    <form id="formDaftar" method="post" action="edit_caleg" enctype="multipart/form-data" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
+                    <input type="text" id="idc" name="idc" value="<?= $dataCaleg['id'] ?>" hidden>
+                      <div class="form-row mx-4" style="margin-top: 20px;">
+                        <div class="col mb-3">
+                          <h6 class="form-text m-0">Umum</h6>
+                          <p class="form-text text-muted m-0">Sesuaikan data yang salah.</p>
+                        </div>
+                      </div>
+                      <div class="form-row mx-4">
+                        <div class="col-lg-4" style="padding-bottom: 20px;">
+                          <label for="foto_caleg" class="text-center w-100 mb-4">Foto Profil</label>
+                          <div class="edit-user-details__avatar m-auto" >
+                          <img src="../assets/img/caleg/<?= $dataCaleg['foto'] ?>" alt="User Avatar">
+                            <label class="edit-user-details__avatar__change">
+                              <i class="material-icons mr-1">&#xE439;</i>
+                              <input type="file" id="foto_caleg" name="foto_caleg" class="d-none" style="display: none;">
+                            </label>
+                          </div>
+                          <!-- <button class="btn btn-sm btn-white d-table mx-auto mt-4"><i class="material-icons">&#xE2C3;</i> Upload Image</button> -->
+                        </div>
+                        <div class="col-lg-8">
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                              <label for="nik">NIK</label>
+                              <input type="text" class="form-control" name="nik" id="nik" value="<?= $dataCaleg['nik'] ?>">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="nama">Nama Lengkap</label>
+                              <input type="text" class="form-control" name="nama" id="nama" value="<?= $dataCaleg['nama'] ?>">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="tempat_lahir">Tempat Lahir</label>
+                              <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="tempat_lahir" id="tempat_lahir" value="<?= $dataCaleg['tempat_lahir'] ?>">
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="tanggal_lahir">Tanggal Lahir</label>
+                              <div class="input-group input-group-seamless">
+                                <input type="date" class="form-control" name="tanggal_lahir" id="tanggal_lahir" value="<?= $dataCaleg['tanggal_lahir'] ?>">
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="gender">Jenis Kelamin</label>
+                              <div class="input-group input-group-seamless">
+                                <select class="form-control" name="gender" id="gender" required>
+                                  <?php
+                                    $genders = mysqli_query($conn, "SELECT * FROM tb_jenis_kelamin");
+                                  ?>
+                                  <option value="">Pilih Jenis Kelamin</option>
+                                  <?php foreach ($genders as $gender) : ?>
+                                  <option value="<?= $gender['id_gender'] ?>" <?= ($gender['id_gender'] == $dataCaleg['id_gender'] ? "selected" : ""); ?> ><?= $gender['ket_gender'] ?></option>
+                                <?php endforeach; ?>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="agama">Agama</label>
+                              <div class="input-group input-group-seamless">
+                              <select class="form-control" name="agama" id="agama" required>
+                                <?php
+                                  $agamaAll = mysqli_query($conn, "SELECT * FROM tb_agama");
+                                ?>
+                                
+                                <option value="">Pilih Agama</option>
+                                <?php foreach ($agamaAll as $agama) : ?>
+                                <option value="<?= $agama['id_agama'] ?>" <?= ($agama['id_agama'] == $dataCaleg['id_agama'] ? "selected" : ""); ?> ><?= $agama['nama_agama']; ?></option>
+                              <?php endforeach; ?>
+                              </select>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="pend_akhir">Pendidikan Terakhir</label>
+                              <div class="input-group input-group-seamless">
+                              <select class="form-control" name="pend_akhir" id="pend_akhir" required>
+                                <?php
+                                  $pends = mysqli_query($conn, "SELECT * FROM tb_pendidikan");
+                                ?>
+                                <option value="">Pilih Pendidikan</option>
+                                <?php foreach ($pends as $pend) : ?>
+                                <option value="<?= $pend['id_pend'] ?>" <?= ($pend['id_pend'] == $dataCaleg['id_pend'] ? "selected" : ""); ?> ><?= $pend['nama_pend'] ?></option>
+                              <?php endforeach; ?>
+                              </select>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="bidang_pend">Bidang Pendidikan</label>
+                              <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="bidang_pend" id="bidang_pend" value="<?= $dataCaleg['bidang_pend'] ?>">
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="pekerjaan">Pekerjaan</label>
+                              <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="pekerjaan" id="pekerjaan" value="<?= $dataCaleg['pekerjaan'] ?>">
+                              </div>
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                      <hr>
+                      <div class="form-row mx-4">
+                        <div class="col mb-3">
+                          <h6 class="form-text m-0">Alamat Lengkap</h6>
+                          <p class="form-text text-muted m-0">Ganti alamat apabila salah.</p>
+                        </div>
+                      </div>
+                      <div class="form-row mx-4">
+                        <div class="form-group col-md-6">
+                            <label for="provinsi">Provinsi</label>
+                            <div class="input-group input-group-seamless">
+                            <input class="form-control" type="text" name="nama_provinsi" id="nama_provinsi" hidden>
+                            <select class="form-control" name="provinsi" id="provinsi"  required>
+                              <option value="0">Pilih Provinsi</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="kabupaten">Kabupaten</label>
+                            <div class="input-group input-group-seamless">
+                            <input class="form-control" type="text" name="nama_kabupaten" id="nama_kabupaten" hidden>
+                            <select class="form-control" name="kabupaten" id="kabupaten" required>
+                              <option value="">Pilih Kabupaten</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="kecataman">Kecamatan</label>
+                            <div class="input-group input-group-seamless">
+                              <input class="form-control" type="text" name="nama_kecamatan" id="nama_kecamatan" hidden>
+                      
+                            <select class="form-control" name="kecamatan" id="kecamatan" required>
+                              <option value="">Pilih Kecamatan</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="kelurahan">Kelurahan</label>
+                            <div class="input-group input-group-seamless">
+                            <input class="form-control" type="text" name="nama_kelurahan" id="nama_kelurahan" hidden>
+                            <select class="form-control" name="kelurahan" id="kelurahan" required>
+                              <option value="">Pilih Kelurahan</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="alamat_ktp">Alamat Sesuai Ktp</label>
+                            <div class="input-group input-group-seamless">
+                                <textarea class="form-control" name="alamat_ktp" id="alamat_ktp" ><?= $dataCaleg['alamat_ktp'] ?></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="alamat_tinggal">Alamat Tinggal</label>
+                            <div class="input-group input-group-seamless">
+                                <textarea class="form-control" name="alamat_tinggal" id="alamat_tinggal"><?= $dataCaleg['alamat_tinggal'] ?></textarea>
+                            </div>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                      <hr>
+                      <div class="form-row mx-4">
+                        <div class="col mb-3">
+                          <h6 class="form-text m-0">Media Social</h6>
+                          <p class="form-text text-muted m-0">Ganti sosial media jika salah.</p>
+                        </div>
+                      </div>
+                      <div class="form-row mx-4">
+                        <div class="form-group col-md-6">
+                            <label for="telepon">Telepon/No. Hp</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="telepon" id="telepon" value="<?= $dataCaleg['telepon'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="email">Email</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="email" class="form-control" name="email" id="email" value="<?= $dataCaleg['email'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="facebook">Facebook</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="facebook" id="facebook" value="<?= $dataCaleg['facebook'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="twitter">Twitter</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="twitter" id="twitter" value="<?= $dataCaleg['twitter'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="instagram">Instagram</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="instagram" id="instagram" value="<?= $dataCaleg['instagram'] ?>">
+                            </div>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                      <hr>
+                      <div class="form-row mx-4">
+                        <div class="col mb-3">
+                          <h6 class="form-text m-0">Data Partai</h6>
+                          <p class="form-text text-muted m-0">Ganti data detail partai apabila ada yang salah.</p>
+                        </div>
+                      </div>
+                      <div class="form-row mx-4">
+                        <div class="form-group col-md-6">
+                            <label for="partai">Partai</label>
+                            <div class="input-group input-group-seamless">
+                                <select class="form-control" name="partai" id="partai" required>
+                                  <?php
+                                    $partais = mysqli_query($conn, "SELECT * FROM tb_partai");
+                                  ?>
+                                  <option value="">Pilih Partai</option>
+                                  <?php foreach ($partais as $partai) : ?>
+                                  <option value="<?= $partai['id'] ?>" <?= ($partai['id'] == $dataCaleg['id_partai'] ? "selected" : ""); ?> ><?= $partai['nama_partai'] ?></option>
+                                  <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="jbt_partai">Jabatan dalam partai</label>
+                            <div class="input-group input-group-seamless">
+                                <select class="form-control" name="jbt_partai" id="jbt_partai" required>
+                                    <?php
+                                      $jbt_partai = mysqli_query($conn, "SELECT * FROM tb_jbt_partai");
+                                    ?>
+                                    <option value="">Pilih jabatan Partai</option>
+                                    <?php foreach ($jbt_partai as $jabatan) : ?>
+                                    <option value="<?= $jabatan['id_jbt_partai'] ?>" <?= ($jabatan['id_jbt_partai'] == $dataCaleg['id_jbt_partai'] ? "selected" : ""); ?> ><?= $jabatan['nama_jabatan'] ?>
+                                    </option>
+                                    <?php endforeach; ?>
+                                  </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="tingkat_caleg">Tingkat Caleg</label>
+                            <div class="input-group input-group-seamless">
+                            <select class="form-control" name="tingkat_caleg" id="tingkat_caleg" required>
+                              <?php
+                                $tingkats = mysqli_query($conn, "SELECT * FROM tb_tingkat_caleg");
+                              ?>
+                              
+                              <option value="">Pilih Tingkatan Caleg</option>
+                              <?php foreach ($tingkats as $tingkat) : ?>
+                              <option value="<?= $tingkat['id_tingkat'] ?>" <?= ($tingkat['id_tingkat'] == $dataCaleg['tingkat_caleg'] ? "selected" : ""); ?> ><?= $tingkat['nama_tingkat'] ?></option>
+                            <?php endforeach; ?>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="daerah_caleg">Provinsi/Kab/Kota</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="daerah_caleg" id="daerah_caleg" value="<?= $dataCaleg['tempat_caleg'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="daerah_pilih">Daerah Pilihan</label>
+                            <div class="input-group input-group-seamless">
+                                <input type="text" class="form-control" name="daerah_pilih" id="daerah_pilih" value="<?= $dataCaleg['daerah_pilih'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="visi">Visi</label>
+                            <div class="input-group input-group-seamless">
+                                <textarea class="form-control" name="visi" id="visi"><?= $dataCaleg['visi'] ?></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="misi">Misi</label>
+                            <div class="input-group input-group-seamless">
+                                <textarea class="form-control" name="misi" id="misi"><?= $dataCaleg['misi'] ?></textarea>
+                            </div>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                      <hr>
+                      <div class="form-row mx-4">
+                        <div class="col mb-3">
+                          <h6 class="form-text m-0">Foto Pendukung</h6>
+                          <p class="form-text text-muted m-0">Upload foto ulang apabila salah.</p>
+                        </div>
+                      </div>
+                      <div class="form-row mx-4">
+                        <div class="form-group col-md-6">
+                            <label for="foto_ktp">Foto KTP</label>
+                            <div class="input-group input-group-seamless">
+                              <img src="../assets/img/ktp/<?= $dataCaleg['foto_ktp'] ?>" alt="<?= $dataCaleg['foto_ktp'] ?>" class="img-thumbnail" style="max-height: 50px;">&nbsp;<span class="text-danger"><?= $error1 ?></span>
+                              <br>
+                              <input type="file" class="form-control" id="foto_ktp" name="foto_ktp">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="foto_tulisan">Foto Tulisan 1 halaman</label>
+                            <div class="input-group input-group-seamless">
+                              <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-height: 50px;">&nbsp;<span class="text-danger"><?= $error2 ?></span>
+                              <br><input type="file" class="form-control" id="foto_tulisan" name="foto_tulisan">
+                            </div>
+                        </div>
+                      </div>
+                        <div class="card-footer border-top" id='btn_save'>
+                            <button id='save' name='save' type="submit" class="btn btn-sm btn-accent ml-auto d-table mr-3">Save Changes</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- End Edit User Details Card -->
+              
             </div>
-            <div class="form-group">
-              <label class="control-label">Email</label>
-              <input type="email" class="form-control1 ng-invalid ng-valid-email ng-invalid-required ng-touched" ng-model="model.email" required="">
-            </div>
-            <div class="form-group">
-              <label class="control-label">Password</label>
-              <input type="password" class="form-control1 ng-invalid ng-invalid-required ng-touched" ng-model="model.password" required="">
-            </div>
-            <div class="form-group">
-              <label class="control-label">Url</label>
-              <input type="url" class="form-control1 ng-invalid ng-valid-url ng-invalid-required ng-touched" ng-model="model.url" required="">
-            </div>
-            <div class="form-group">
-              <label class="control-label">Number</label>
-              <input type="text" class="form-control1 ng-invalid ng-invalid-required ng-valid-pattern ng-touched" ng-model="model.number" ng-pattern="/[0-9]/" required="">
-              <p class="help-block hint-block">Numeric values from 0-***</p>
-            </div>
-            <div class="form-group">
-              <label class="control-label normal">Date</label>
-              <input type="date" class="form-control1 ng-invalid ng-invalid-required" ng-model="model.date" required="">
-            </div>
-            <div class="form-group">
-              <div class="checkbox1">
-                <label>
-                  <input type="checkbox" ng-model="model.winner" required="" class="ng-invalid ng-invalid-required">
-                  Are you a winner?
-                </label>
-              </div>
-            </div>
-            <div class="form-group filled">
-              <label class="control-label">Select</label>
-              <select class="form-control1 ng-invalid ng-invalid-required" ng-model="model.select" required=""><option value="? undefined:undefined ?"></option>
-                <option value="Select a pirate">Select a pirate</option>
-                <option value="Monkey D. Luffy">Monkey D. Luffy</option>
-                <option value="Roronoa Zoro">Roronoa Zoro</option>
-                <option value="Tony Tony Chopper">Tony Tony Chopper</option>
-                <option value="Nico Robin">Nico Robin</option>
-                <option value="Bon Clay">Bon Clay</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary">Submit</button>
-              <button type="reset" class="btn btn-default">Reset</button>
-            </div>
-          </fieldset>
-        </form>
+          </div>
+      
       </div>
-    </div>
-    <div class="copy_layout">
+       
+	   </div>
+     <div class="copy_layout">
       <p>Copyright Reserved © 2019 Suko - SIPALEG</p>
   </div>
   <div class="text-center w-full">
@@ -276,7 +632,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
           <i class="fa fa-long-arrow-right"></i>
         </a>
   </div>
-   </div>
       </div>
       <!-- /#page-wrapper -->
    </div>
@@ -286,5 +641,224 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- Metis Menu Plugin JavaScript -->
 <script src="js/metisMenu.min.js"></script>
 <script src="js/custom.js"></script>
+<script>
+      var return_first = function() {
+          var tmp = null;
+          $.ajax({
+              'async': false,
+              'type': "get",
+              'global': false,
+              'dataType': 'json',
+              'url': 'https://x.rajaapi.com/poe',
+              'success': function(data) {
+                  tmp = data.token;
+              }
+          });
+          return tmp;
+      }();
+
+      $(document).ready(function() {
+        $.ajax({
+          url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/provinsi',
+          type: 'GET',
+          dataType: 'json',
+          success: function(json) {
+            if (json.code == 200) {
+                for (i = 0; i < Object.keys(json.data).length; i++) {
+                    $('#provinsi').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                }
+            } else {
+                $('#provinsi').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+            }
+          }
+        });
+        
+        $("#provinsi").change(function() {
+          $("#nama_provinsi").attr('value', $("#provinsi").children("option:selected").text());
+          var propinsi = $("#provinsi").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kabupaten',
+              data: "idpropinsi=" + propinsi,
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kabupaten").html('');
+                if (json.code == 200) {
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                        $('#kabupaten').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                    }
+                } else {
+                    $('#kabupaten').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+        $("#kabupaten").change(function() {
+          $("#nama_kabupaten").attr('value', $("#kabupaten").children("option:selected").text());
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kecamatan',
+              data: "idkabupaten=" + kabupaten + "&idpropinsi=" + propinsi,
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kecamatan").html('');
+                if (json.code == 200) {
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                        $('#kecamatan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                    }
+                } else {
+                    $('#kecamatan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kecamatan").change(function() {
+          $("#nama_kecamatan").attr('value', $("#kecamatan").children("option:selected").text());
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          var kecamatan = $("#kecamatan").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kelurahan',
+              data: "idkabupaten=" + kabupaten + "&idpropinsi=" + propinsi + "&idkecamatan=" + kecamatan,
+              type: 'GET',
+              dataType: 'json',
+              cache: false,
+              success: function(json) {
+                $("#kelurahan").html('');
+                if (json.code == 200) {
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                        $('#kelurahan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id));
+                    }
+                } else {
+                    $('#kelurahan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kelurahan").change(function() {
+          $("#nama_kelurahan").attr('value', $("#kelurahan").children("option:selected").text());
+        });
+      });
+    </script>
+    <script>
+      var return_first = function() {
+          var tmp = null;
+          $.ajax({
+              'async': false,
+              'type': "get",
+              'global': false,
+              'dataType': 'json',
+              'url': 'https://x.rajaapi.com/poe',
+              'success': function(data) {
+                  tmp = data.token;
+              }
+          });
+          return tmp;
+      }();
+
+      $(document).ready(function() {
+        $.ajax({
+          url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/provinsi',
+          type: 'GET',
+          dataType: 'json',
+          success: function(json) {
+            if (json.code == 200) {
+                    var idProvSelected = '<?= $id_prov ?>';
+                for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idProv = String(json.data[i].id);
+                    $('#provinsi').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idProv == idProvSelected ? true : false)));
+                    
+                }
+            } else {
+                $('#provinsi').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+            }
+          }
+        });
+        
+        $("#provinsi").ready(function() {
+          $("#nama_provinsi").attr('value', $("#provinsi").children("option:selected").text());
+          var propinsi = $("#provinsi").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kabupaten',
+              data: "idpropinsi=" + '<?= $id_prov ?>',
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kabupaten").html('');
+                if (json.code == 200) {
+                    var idKabSelected = '<?= $id_kab ?>';
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idKab = String(json.data[i].id);
+                        $('#kabupaten').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idKab == idKabSelected ? true : false)));
+                    }
+                } else {
+                    $('#kabupaten').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+        $("#kabupaten").ready(function() {
+          $("#nama_kabupaten").attr('value', $("#kabupaten").children("option:selected").text());
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kecamatan',
+              data: "idkabupaten=" + '<?= $id_kab ?>' + "&idpropinsi=" + '<?= $id_prov ?>',
+              type: 'GET',
+              cache: false,
+              dataType: 'json',
+              success: function(json) {
+                $("#kecamatan").html('');
+                if (json.code == 200) {
+                    var idKecSelected = '<?= $id_kec ?>';
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idKec = String(json.data[i].id);
+                        $('#kecamatan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idKec == idKecSelected ? true : false)));
+                    }
+                } else {
+                    $('#kecamatan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kecamatan").ready(function() {
+          $("#nama_kecamatan").attr('value', $("#kecamatan").children("option:selected").text());
+          var propinsi = $("#provinsi").val();
+          var kabupaten = $("#kabupaten").val();
+          var kecamatan = $("#kecamatan").val();
+          $.ajax({
+              url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kelurahan',
+              data: "idkabupaten=" + '<?= $id_kab ?>' + "&idpropinsi=" + '<?= $id_prov ?>' + "&idkecamatan=" + '<?= $id_kec ?>',
+              type: 'GET',
+              dataType: 'json',
+              cache: false,
+              success: function(json) {
+                $("#kelurahan").html('');
+                if (json.code == 200) {
+                    var idKelSelected = '<?= $id_kel ?>';
+                    for (i = 0; i < Object.keys(json.data).length; i++) {
+                    var idKel = String(json.data[i].id);
+                        $('#kelurahan').append($('<option>').text(json.data[i].name).attr('value', json.data[i].id).prop('selected', (idKel == idKelSelected ? true : false)));
+                    }
+                } else {
+                    $('#kelurahan').append($('<option>').text('Data tidak di temukan').attr('value', 'Data tidak di temukan'));
+                }
+              }
+          });
+        });
+
+        $("#kelurahan").ready(function() {
+          $("#nama_kelurahan").attr('value', $("#kelurahan").children("option:selected").text());
+        });
+      });
+    </script>
 </body>
 </html>

@@ -165,11 +165,30 @@
                 <!-- Edit User Details Card -->
                 <div class="card card-small edit-user-details mb-4">
                   <div class="card-body p-0">
+                    <?php
+                      if ($idC != mysqli_fetch_assoc(mysqli_query($conn, "SELECT MIN(id) FROM tb_data_caleg"))["MIN(id)"]) {
+                        $idPrev = mysqli_fetch_assoc(mysqli_query($conn, "SELECT MAX(id) FROM tb_data_caleg WHERE id < $idC"))["MAX(id)"];
+                      }
+                      if ($idC != mysqli_fetch_assoc(mysqli_query($conn, "SELECT MAX(id) FROM tb_data_caleg"))["MAX(id)"]) {
+                        $idNext = mysqli_fetch_assoc(mysqli_query($conn, "SELECT MIN(id) FROM tb_data_caleg WHERE id > $idC"))["MIN(id)"];
+                      }
+                    ?>
                     <div class="card-footer border-top" id='btn_save'>
-                      <button class="btn btn-sm btn-accent ml-auto d-table mr-3">Prev Caleg
+                      <?php if ($idC != mysqli_fetch_assoc(mysqli_query($conn, "SELECT MIN(id) FROM tb_data_caleg"))["MIN(id)"]) { ?>
+                        <button onclick="location.href = '?caleg=<?= $idPrev ?>'" class="btn btn-sm btn-accent ml-auto d-table mr-3">Prev Caleg
+                        </button>
+                      <?php } else { ?>
+                        <button onclick="location.href = '?caleg=<?= $idPrev ?>'" class="btn btn-sm btn-accent ml-auto d-table mr-3" disabled>Prev Caleg</button>
+                      <?php } ?>
+                      <button onclick="location.href = 'edit_caleg?caleg=<?= $idC ?>'" class="btn btn-sm btn-primary ml-auto d-table mr-3" >Edit Caleg</button>
+                      <button onclick="location.href = 'delete_data?caleg=<?= $idC ?>'" class="btn btn-sm btn-danger ml-auto d-table mr-3" >Delete Caleg</button>
+                      <?php if ($idC != mysqli_fetch_assoc(mysqli_query($conn, "SELECT MAX(id) FROM tb_data_caleg"))["MAX(id)"]) { ?>
+                        <button onclick="location.href = '?caleg=<?= $idNext ?>'" class="btn btn-sm btn-accent ml-auto d-table mr-3">Next Caleg
                       </button>
-                      <button class="btn btn-sm btn-accent ml-auto d-table mr-3">Next Caleg
+                      <?php } else { ?>
+                        <button onclick="location.href = '?caleg=<?= $idNext ?>'" class="btn btn-sm btn-accent ml-auto d-table mr-3" disabled>Next Caleg
                       </button>
+                      <?php } ?>
                     </div>
                     <form id="formDaftar" method="post" action="edit_caleg" enctype="multipart/form-data" class="py-4" style="max-width: 100%; border-top: 2px solid red;">
                     
@@ -456,19 +475,19 @@
                         <div class="form-group col-md-6">
                             <label for="foto_ktp">Foto KTP</label>
                             <div class="input-group input-group-seamless">
-                              <img src="../assets/img/ktp/<?= $dataCaleg['foto_ktp'] ?>" alt="<?= $dataCaleg['foto_ktp'] ?>" class="img-thumbnail" style="max-width: 300px;">&nbsp;<span class="text-danger"><?= $error1 ?></span>
+                              <img src="../assets/img/ktp/<?= $dataCaleg['foto_ktp'] ?>" alt="<?= $dataCaleg['foto_ktp'] ?>" class="img-thumbnail" style="width: 600px;">&nbsp;<span class="text-danger"><?= $error1 ?></span>
                               <br>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="foto_tulisan">Foto Tulisan 1 halaman</label>
                             <div class="input-group input-group-seamless">
-                              <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-width: 300px;">&nbsp;<span class="text-danger"><?= $error2 ?></span>
+                              <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="width: 500px;">&nbsp;<span class="text-danger"><?= $error2 ?></span>
                               <br>
                             </div>
                         </div>
                       <div class="card-footer border-top" id='btn_save'>
-                      <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-width: 300px; display: none">&nbsp;</div>
+                      <img src="../assets/img/tulisan/<?= $dataCaleg['foto_tulisan'] ?>" alt="<?= $dataCaleg['foto_tulisan'] ?>" class="img-thumbnail" style="max-width: 500px; display: none">&nbsp;</div>
                       </div>
                     </form>
                   </div>

@@ -281,7 +281,7 @@
                     </div>
                     <div class="form-group"><label for="tanggal_now">Tanggal Daftar</label><input class="form-control" type="date" name="tanggal_now" id="tanggal_now" value="<?= $today ?>" disabled></div>
                     <div class="form-group"><button class="btn btn-danger btn-block" name="edit" id="edit" hidden=true >
-                      <a style="text-decoration: none; color: white;" href="profile">Edit in Dashbord</a>
+                      <a style="text-decoration: none; color: white;" href="profile?edit">Edit in Dashbord</a>
                   </button></div>
                     <div class="form-group" ><button class="btn btn-danger btn-block" type="submit" name="daftar" id="daftar">Send</button></div>
                     

@@ -2,6 +2,8 @@
   session_start();
   require "functions.php";
 
+  // echo fix
+
   $login = sessionChecker();
 
   $error1 = "";

@@ -251,10 +251,10 @@
                     <li class="nav-item" role="presentation"><a class="nav-link" href="login">LOGIN</a></li>
                     <?php else : ?>
                     <li class="nav-item dropdown" role="presentation">
-                        <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown"
+                    <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown"
                         style="text-decoration: none; color: black;">
-                            <img src="assets/img/caleg/<?= $dataCaleg['foto'] ?>"
-                                style="border-radius: 50%; width: 50px; height : 50px;">
+                            <img src="assets/img/caleg/<?= !empty($dataCaleg['foto']) ? $dataCaleg['foto'] : 'no_photo.jpg' ;?>"
+                                style="border-radius: 50%; width: 50px; height : 50px; border: 1px solid grey;">
                         </a>
                         <ul class="dropdown-menu">
                             <li class="m_2"><a href="profile" class="nav-link"><i class="icon-user icon"></i> Profile</a></li>

@@ -3,6 +3,12 @@
   require "functions.php";
 
   $login = sessionChecker();
+  if ($login == 1) {
+    $uname = $_SESSION['username'];
+    $result = mysqli_query($conn, "SELECT * FROM tb_data_caleg WHERE username='$uname'");
+    $getDaftar = mysqli_num_rows($result);
+    $dataCaleg = mysqli_fetch_assoc($result);
+  }
 ?>
 
 <!DOCTYPE html>
@@ -38,10 +44,23 @@
                     <?php if ($login != 1) : ?>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="login">LOGIN</a></li>
                     <?php else : ?>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="logout">LOGOUT</a></li>
+                    <li class="nav-item dropdown" role="presentation">
+                        <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown"
+                        style="text-decoration: none; color: black;">
+                            <img src="assets/img/caleg/<?= $dataCaleg['foto'] ?>"
+                                style="border-radius: 50%; width: 50px; height : 50px;">
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="m_2"><a href="profile" class="nav-link"><i class="icon-user icon"></i> Profile</a></li>
+                            <li class="m_2"><a href="profile?edit" class="nav-link"><i class="icon-user-following icon"></i> Edit Profile</a></li>
+                            <li class="m_2"><a href="logout" class="nav-link"><i class="icon-lock icon"></i> Logout</a></li>
+                        </ul>
+                    </li>
                     <?php endif; ?>
+                    
                 </ul>
             </div>
+            
         </div>
     </nav>
     <main class="page landing-page">

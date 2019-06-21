@@ -289,7 +289,7 @@
                         <div class="col-lg-4" style="padding-bottom: 20px;">
                           <label for="foto_caleg" class="text-center w-100 mb-4">Foto Profil</label>
                           <div class="edit-user-details__avatar m-auto" >
-                          <img src="assets/img/caleg/<?= $dataCaleg['foto'] ?>" alt="User Avatar">
+                          <img src="assets/img/caleg/<?= !empty($dataCaleg['foto']) ? $dataCaleg['foto'] : 'no_photo.jpg' ;?>" alt="User Avatar">
                             <label class="edit-user-details__avatar__change">
                               <i class="material-icons mr-1">&#xE439;</i>
                               <input type="file" id="foto_caleg" name="foto_caleg" class="d-none">

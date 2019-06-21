@@ -3,7 +3,6 @@
   require "functions.php";
 
   $login = sessionChecker();
-  // var_dump($_GET);
 ?>
 
 <!DOCTYPE html>

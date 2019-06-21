@@ -65,11 +65,6 @@
     $kabupaten = htmlspecialchars($data['kabupaten']);
     $kecamatan = htmlspecialchars($data['kecamatan']);
 
-    $nama_provinsi = htmlspecialchars($data['nama_provinsi']);
-    $nama_kabupaten = htmlspecialchars($data['nama_kabupaten']);
-    $nama_kecamatan = htmlspecialchars($data['nama_kecamatan']);
-    $nama_kelurahan = htmlspecialchars($data['nama_kelurahan']);
-
     $username = $_SESSION['username'];
     $id = htmlspecialchars($data['idc']);
     $tanggal_daftar = '';
@@ -142,11 +137,6 @@
       // }
 
     }
-
-    $queryProv = "INSERT INTO tb_provinsi VALUES ('$provinsi', '$nama_provinsi')";
-    $queryKab = "INSERT INTO tb_kabupaten VALUES ('$kabupaten', '$provinsi', '$nama_kabupaten')";
-    $queryKec = "INSERT INTO tb_kecamatan VALUES ('$kecamatan', '$kabupaten', '$nama_kecamatan')";
-    $queryKel = "INSERT INTO tb_kelurahan VALUES ('$kelurahan', '$kecamatan', '$nama_kelurahan')";
 
     $queryUpdateCaleg = "
     UPDATE tb_data_caleg
@@ -373,7 +363,6 @@
                         <div class="form-group col-md-6">
                             <label for="provinsi">Provinsi</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_provinsi" id="nama_provinsi" value="<?= $namaPro ?>" style="display: none;" hidden>
                             <select class="form-control" name="provinsi" id="provinsi"  required>
                               <option value="0">Pilih Provinsi</option>
                             </select>
@@ -382,7 +371,6 @@
                         <div class="form-group col-md-6">
                             <label for="kabupaten">Kabupaten</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kabupaten" id="nama_kabupaten" value="<?= $namaKab ?>" style="display: none;" hidden>
                             <select class="form-control" name="kabupaten" id="kabupaten" required>
                               <option value="">Pilih Kabupaten</option>
                             </select>
@@ -391,7 +379,6 @@
                         <div class="form-group col-md-6">
                             <label for="kecataman">Kecamatan</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kecamatan" id="nama_kecamatan" value="<?= $namaKec ?>" style="display: none;" hidden>
                             <select class="form-control" name="kecamatan" id="kecamatan" required>
                               <option value="">Pilih Kecamatan</option>
                             </select>
@@ -400,7 +387,6 @@
                         <div class="form-group col-md-6">
                             <label for="kelurahan">Kelurahan</label>
                             <div class="input-group input-group-seamless">
-                            <input class="form-control" type="text" name="nama_kelurahan" id="nama_kelurahan" value="<?= $namaKel ?>" style="display: none;" hidden>
                             <select class="form-control" name="kelurahan" id="kelurahan" required>
                               <option value="">Pilih Kelurahan</option>
                             </select>
@@ -664,7 +650,6 @@
         });
         
         $("#provinsi").change(function() {
-          $("#nama_provinsi").attr('value', $("#provinsi").children("option:selected").text());
           var propinsi = $("#provinsi").val();
           $.ajax({
               url: 'https://x.rajaapi.com/MeP7c5ne' + window.return_first + '/m/wilayah/kabupaten',
@@ -685,7 +670,6 @@
           });
         });
         $("#kabupaten").change(function() {
-          $("#nama_kabupaten").attr('value', $("#kabupaten").children("option:selected").text());
           var propinsi = $("#provinsi").val();
           var kabupaten = $("#kabupaten").val();
           $.ajax({
@@ -708,7 +692,6 @@
         });
 
         $("#kecamatan").change(function() {
-          $("#nama_kecamatan").attr('value', $("#kecamatan").children("option:selected").text());
           var propinsi = $("#provinsi").val();
           var kabupaten = $("#kabupaten").val();
           var kecamatan = $("#kecamatan").val();

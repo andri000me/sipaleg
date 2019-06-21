@@ -215,7 +215,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         .edit-user-details__avatar {
-          max-width: 200px;
+          max-width: 300px;
+          height: 300px;
+        }
+        .edit-user-details__avatar img{
+          width: auto;
+          height: 300px;
         }
         .edit-user-details__avatar__change i {
             line-height: 150px;
